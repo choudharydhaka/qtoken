@@ -1,0 +1,16 @@
+<h1>
+{% url 'liquor:stores'  %}
+</h1>
+<h1>Submit your details and register your store</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'liquor:stores' %}" method="post">
+    <p><strong>Owner  Details</strong></p>
+{% csrf_token %}
+{{StoreOwner}}
+<p><strong>Liquor Store Details</strong></p>
+{{LiquorStore}}
+<input type="submit" value="Register">
+</form>
+

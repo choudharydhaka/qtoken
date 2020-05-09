@@ -1,0 +1,35 @@
+{% if isNew == 'true' %}
+<h3>
+ Congratulations! your store has been registered, please note the store ID somewhere, you will need to to get all the tokens.
+  <p></h3>
+  Your Store ID is:<strong> {{store.store_id}}</strong></p>
+ 
+{% endif %}
+
+context={'error': True,'store_id': store_id}
+<h1>Tokens for your store</h1>
+
+
+{% if error %}
+<h4>Please provide a valid store ID, {{store_id}}</h4>
+{% endif %}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% if not error %}
+<table>
+  <tr> <th>Customer Name</th><th>Customer mobile </th><th>Customer address</th>
+    <th>Token number</th>
+    <th>Token Valid</th>
+    <th>Token date</th></tr>
+{% for c in tokens %}
+    <td>{{ c.consumer.name }}</td>
+    <td>{{ c.consumer.mobile_number }}</td>
+    <td>{{ c.consumer.address }}</td>
+      <td>{{ c.token_number }}</td>
+      <td>{{ c.token_valid }}</td>
+      <td>{{ c.token_date }}</td>
+  </tr>
+{% endfor %}
+
+</table>
+{% endif %}
