@@ -1,3 +1,6 @@
+{% extends 'liquor/base.html' %}
+{% block content %}
+
 {% if isNew == 'true' %}
 <h3>
  Congratulations! your store has been registered, please note the store ID somewhere, you will need to to get all the tokens.
@@ -5,8 +8,10 @@
   Your Store ID is:<strong> {{store.store_id}}</strong></p>
  
 {% endif %}
-{{store.pincode}}
-context={'error': True,'store_id': store_id}
+
+Pincode: {{store.pincode}}
+
+
 <h1>Tokens for your store</h1>
 
 
@@ -36,3 +41,5 @@ context={'error': True,'store_id': store_id}
 
 </table>
 {% endif %}
+
+{% endblock %}

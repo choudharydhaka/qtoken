@@ -1,4 +1,5 @@
-
+{% extends 'liquor/base.html' %}
+{% block content %}
 <h3>Please register your Liquor store</h3>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
@@ -6,9 +7,10 @@
 <form action="{% url 'liquor:stores' %}" method="post">
     <p><strong>Owner  Details</strong></p>
 {% csrf_token %}
-{{StoreOwner}}
+{{StoreOwner.as_p}}
 <p><strong>Liquor Store Details</strong></p>
-{{LiquorStore}}
+{{LiquorStore.as_p}}
 <input type="submit" value="Register">
 </form>
 
+{% endblock %}
