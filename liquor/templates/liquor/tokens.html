@@ -5,7 +5,7 @@
   Your Store ID is:<strong> {{store.store_id}}</strong></p>
  
 {% endif %}
-
+{{store.pincode}}
 context={'error': True,'store_id': store_id}
 <h1>Tokens for your store</h1>
 
@@ -20,14 +20,17 @@ context={'error': True,'store_id': store_id}
   <tr> <th>Customer Name</th><th>Customer mobile </th><th>Customer address</th>
     <th>Token number</th>
     <th>Token Valid</th>
-    <th>Token date</th></tr>
+    <th>Token date</th>
+    <th>Time Slot</th>
+  </tr>
 {% for c in tokens %}
     <td>{{ c.consumer.name }}</td>
     <td>{{ c.consumer.mobile_number }}</td>
     <td>{{ c.consumer.address }}</td>
       <td>{{ c.token_number }}</td>
       <td>{{ c.token_valid }}</td>
-      <td>{{ c.token_date }}</td>
+      <td>{{ c.token_created }}</td>
+      <td>{{ c.token_slot }}</td>
   </tr>
 {% endfor %}
 

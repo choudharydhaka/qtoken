@@ -24,20 +24,12 @@
   
 
 {% endif %}
-{% if error %}<p><strong>{{ error }}</strong></p>{% endif %}
-{% if isSearch == True %}
+ 
+
 <form action="{% url 'liquor:search' %}" method="post">
 {% csrf_token %}
 {{form.as_p }}
 <input type="submit" value="Get Token">
 </form>
-{% endif %}
-
-{% if isSearch == False %}
-<form action="{% url 'liquor:index' %}" method="post">
-    {% csrf_token %}
-    {{form.as_p }}
-    <input type="submit" value="Get Token">
-    </form>
-    {% endif %}
 {% endblock %}
+

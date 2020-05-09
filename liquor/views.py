@@ -7,9 +7,12 @@ from django.contrib import messages
 from django.http import HttpResponse
 from .models import *
 #from .forms import *
-from .forms import LiquorStoreForm, StoreOwnerForm, ConsumerForm
+from .forms import LiquorStoreForm, StoreOwnerForm, ConsumerForm,SearchStore,ConsumerFormT
 from django.core.exceptions import MultipleObjectsReturned
+from django.utils import timezone
+import pytz
 
+from .utils import Utils
 #  formStore = LiquorStoreForm(request.POST)
 # formOwner = StoreOwnerForm(request.POST)
 # ConsumerForm(request.POST)
@@ -17,6 +20,8 @@ from django.core.exceptions import MultipleObjectsReturned
 import datetime, string, random
 import uuid;
 
+
+SLOTS_THRESHOLD=5
 # class LiquorStore(models.Model):
 #     owner = models.ForeignKey(StoreOwnmer, on_delete=models.CASCADE)
 #     name = models.CharField(max_length=200)
@@ -45,31 +50,123 @@ def stores(request):
     return render(request, 'liquor/stores.html',context)
 
 
-def index(request):
-
+def searchStore(request):
     if request.method == 'POST':
-        form = ConsumerForm(request.POST)
+        form = SearchStore(request.POST)
+        stores=[]
+        if form.is_valid():
+            print('It a valid search form')
+            print (form)
+            store = None
+            if form.cleaned_data.get('pincode') is not None:
+                print("Store search by pincode")
+                stores=LiquorStore.objects.filter(pincode= form.cleaned_data.get('pincode'))
+            elif   form.cleaned_data.get('address') is not None:
+                print("Store search by address")
+                stores= LiquorStore.objects.filter(address= form.cleaned_data.get('address'))
+
+            if len(stores) == 0:
+                print("no store found")
+                context = {
+                'isSearch': True,
+                'error': 'No store found!',
+                'form': form
+                }
+                return render(request, 'liquor/index.html', context)
+            else :
+                print("Store has found, now rendering the list ")
+                print( stores)
+                context = {
+                'isSearch': False,
+                'stores': stores
+                }  
+                store_address=[ (q.store_id , q.name + " - " +q.address )  for q in stores]
+
+                
+                # SLOTS_THRESHOLD=5
+                # count=0
+                # store_slots=[]
+                # for t in Token.objects.all():
+                #     for s in stores:
+                #         if t.store.store_id == s.store_id and slotTime == t.token_slot:
+                #             count=count+1
+                #             print(count)
+
+
+                form=ConsumerForm(initial={'pickup_time':timezone.now()})
+                form.setAddresses(store_address)
+
+                #Utils().getNextSlot(start_time='9:00',end_time='18:00',slot_time=10)
+                SHOP_START_TIME="09"
+                SHOP_CLOSE_TIME="18"
+                startTime='{:%H}'.format(datetime.datetime.now())
+                #print (startTime)
+
+                if int(startTime) <  int(SHOP_START_TIME) and int(startTime) >  int(SHOP_CLOSE_TIME):
+                    startTime=SHOP_START_TIME+":00"
+                else:
+                    startTime=startTime+":00"
+               # elif int(startTime) >  int(SHOPT_CLOSE_TIME):
+                     #return render(request, 'liquor/index.html', { 'error':"Out side of working hours!",'isSearch': False,'form':form})
+                
+                
+                slots=Utils.getNextSlot(start_time=startTime,end_time='18:00',slot_time=60)
+
+                t_slots=[(i,i) for i in slots[0]]
+                form.setPickupTime(t_slots)
+
+
+                return render(request, 'liquor/index.html', { 'isSearch': False,'form':form})                   
+            
+
+        else:
+            print("form validation failed for search")
+            messages.error(request, "Error")
+            return render(request, 'liquor/index.html', { 'isSearch': False,'form':form})    
+            #redirect('liquor/index.html', { 'isSearch': False,'form':form})
+
+    return render(request, 'liquor/index.html', { 'isSearch': True,'form': SearchStore()})#ConsumerForm(initial={'pickup_time':timezone.now()})})
+
+
+
+def index(request):
+    
+    
+    print("request at index")
+    if request.method == 'POST':
+        form = ConsumerFormT(request.POST)
+        sa=request.POST.get('store_address')
+        tt=request.POST.get('pickup_time')
+        
+
+        print(form)
         if form.is_valid():
             print('It a valid form')
-            token=saveConsumerAndGenerateToken(request)    
+            token=saveConsumerAndGenerateToken(request) 
+            if token is None or token.get('error'):
+                return  render(request, 'liquor/index.html', {"error": token.get('error'), 'isSearch': True,'form': SearchStore()})       
             context = {
+                'isSearch': False,
                 'details': token
+                
             }
+           
             return render(request, 'liquor/consumer-thanks.html', context)
         else:
             print("form validation failed")
             messages.error(request, "Error")
 
-            return render(request, 'liquor/index.html', {'form':form})
+            return render(request, 'liquor/index.html', { 'isSearch': False,'form':form})
 
     
-
-    return render(request, 'liquor/index.html', {'form': ConsumerForm()})
+    return searchStore(request)
+    #return render(request, 'liquor/index.html', {'isSearch': False,'form': SearchStore()})#ConsumerForm(initial={'pickup_time':timezone.now()})})
 
 
 def tokens(request,store_id):
     print("Looking for the store: " +store_id)
     liquorStore=get_object_or_404(LiquorStore,store_id=store_id)
+
     context={}
     if liquorStore:
     # for a in liquorStore:
@@ -127,8 +224,8 @@ def ValidateStoreDetails(request):
 
 
 def saveConsumerAndGenerateToken(request):
-    
-    formConsumer = ConsumerForm(request.POST)
+    print("Inside saveConsumerAndGenerateToken")
+    formConsumer = ConsumerFormT(request.POST)
     if formConsumer.is_valid():
         data=formConsumer.cleaned_data
         store=getStore(request)
@@ -149,8 +246,9 @@ def saveConsumerAndGenerateToken(request):
                 name=data['name'],
                 address=data['address'],
                 pincode=data['pincode'],
+
                 mobile_number=data['mobile_number'],
-                created_date=datetime.datetime.now()
+                created_date=timezone.now()
                 #store=store
             )
 
@@ -159,12 +257,15 @@ def saveConsumerAndGenerateToken(request):
 
         else: 
             print ("user already exist!")
-        token=generateToken(consumer,store)
+        token=generateToken(formConsumer,consumer,store)
         return token
+    else:
+        print("form is invalid")
+        return {"error": "Invalid data!"}
 
 def getStore(request):
-
-    form =ConsumerForm(request.POST)
+    print("Inside getStore")
+    form =ConsumerFormT(request.POST)
     if form.is_valid():
         store= get_object_or_404(LiquorStore,store_id=form.cleaned_data['store_address'])
         if store is None:
@@ -177,14 +278,30 @@ def getStore(request):
         return None
         
 
-def generateToken(consumer,store):
+def generateToken(formConsumer,consumer,store):
+    print("Inside generateToken")    
     if store is None or consumer is None: 
         print("Either consumer or store is not provided")
         return None
+    slotTime=formConsumer.cleaned_data['pickup_time']
+
+    count=0
+    for t in Token.objects.all():
+        if t.store.store_id == store.store_id and slotTime == t.token_slot:
+            count=count+1
+            print(count)
+    if count >   SLOTS_THRESHOLD:
+        return {
+            "error": "This time slot is exhausted, Please search again"
+        } 
+
+
+
     token_number=token_generator()
     token=Token(
         store=store,
         consumer=consumer,
+        token_slot=formConsumer.cleaned_data['pickup_time'],
         token_valid=True,
         token_number=token_number
     )
@@ -203,12 +320,6 @@ def createNewOwner(request):
         owner=None
         try:
             print(data)
-    #             mobile_number = models.CharField(max_length=10,blank=False)
-    # name = models.CharField(max_length=200)
-    # address = models.CharField(max_length=200)
-    # pincode= models.CharField(max_length=6)
-    # created_date = models.DateTimeField('date Created')
-            ##{'mobile_number': '09650382883', 'name': 'suresh dhaka', 'address': 'noida', 'pincode': '301201'
             owner=get_object_or_404(StoreOwner,
                     name=data['name'],
                     pincode=data['pincode'],
@@ -225,7 +336,7 @@ def createNewOwner(request):
                 address=data['address'],
                 pincode=data['pincode'],
                 mobile_number=data['mobile_number'],
-                created_date= datetime.datetime.now()
+                created_date= timezone.now()
             )
             ownerModel.save()
             print("New Store Owner has created: " + ownerModel.name)
@@ -262,7 +373,7 @@ def createNewStore(request,owner):
                 address=data['address'],
                 pincode=data['pincode'],
                 is_active=True,
-                created_date=datetime.datetime.now(),
+                created_date=timezone.now(),
                 owner=owner,
                 store_id=storeId
             )
@@ -282,23 +393,3 @@ def createNewStore(request,owner):
 
 
 
-
-
-
-def detail(request):
-    currently_registered=Consumer.objects.order_by('-created_date')
-    #template = loader.get_template('liquor/index.html')
-    context = {
-        'consumer': currently_registered,
-    }
-    return render(request, 'liquor/index.html', context)
-    #return HttpResponse(template.render(context, request))
-    #output = ', '.join([q.name + "," + q.mobile_number + "," + q.address + "," + q.created_date.strftime("%c") for q in currently_registered])
-    #return HttpResponse(output)
-
-def results(request, question_id):
-    response = "You're looking at the results of question %s."
-    return HttpResponse(response % question_id)
-
-def vote(request, question_id):
-    return HttpResponse("You're voting on question %s." % question_id)

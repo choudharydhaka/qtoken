@@ -25,7 +25,9 @@ urlpatterns = [
     #path('index', views.register, name='index'),
     #path('', views.index, name='index'),
      # ex: /polls/5/
+    path('search', views.searchStore, name='search'),
     path('stores', views.stores, name='stores'),     
+
     #path('stores/register', views.stores, name='storeRegister'),  
     path('stores/<str:store_id>', views.tokens, name='tokens'),
 ]
