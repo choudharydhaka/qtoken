@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from twilio.rest import Client
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,6 +22,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'hy7f%7l!v64uc(vl$a@m*i$e2(4p-)oe_opm3r0*1p#xg@)u4$'
+
+## twilio settings
+TWILIO_ACCOUNT_SID = "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+# Your Auth Token from twilio.com/console
+TWILIO_AUTH_TOKEN  = "your_auth_token"
+twilio_client=Client(TWILIO_ACCOUNT_SID,TWILIO_AUTH_TOKEN)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,7 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'twilio'
+    
 ]
 
 MIDDLEWARE = [
