@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from twilio.rest import Client
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,7 +27,15 @@ SECRET_KEY = 'hy7f%7l!v64uc(vl$a@m*i$e2(4p-)oe_opm3r0*1p#xg@)u4$'
 TWILIO_ACCOUNT_SID = "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 # Your Auth Token from twilio.com/console
 TWILIO_AUTH_TOKEN  = "your_auth_token"
-twilio_client=Client(TWILIO_ACCOUNT_SID,TWILIO_AUTH_TOKEN)
+
+# Your Message service ID https://www.twilio.com/console/sms/services
+TWILIO_MESSAGING_SERVICE_SID="MESGXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+#TWILIO_FROM_MOBILE='+512488566'
+TWILIO_FROM_MOBILE='+YOUR_TWILIO_PURCHASED_NUMBER'
+#TWILIO_TO_COUNTRY_CODE='+91'
+TWILIO_TO_COUNTRY_CODE='+COUNTRY_CODE_TO_SEND_SMS'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
