@@ -14,15 +14,22 @@ import pytz
 
 
 import datetime
+import twilio
+import twilio.rest
 
-# start_time = '9:00'
-# end_time = '18:00'
-# slot_time = 10
-
-
+from django.http import HttpResponse
 
 class Utils:
 
+
+    def sms(request):
+        twiml = '<Response><Message>Hello from your Django app!</Message></Response>'
+        return HttpResponse(twiml, content_type='text/xml')
+    # start_time = '9:00'
+    # end_time = '18:00'
+    # slot_time = 10
+
+   
     def getNextSlot(start_time='9:00',end_time='18:00',slot_time=10,days=0):
     # Get store 
     # Start date from today to next 5 day
