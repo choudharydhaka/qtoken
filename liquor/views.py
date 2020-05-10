@@ -21,7 +21,7 @@ import datetime, string, random
 import uuid;
 
 
-SLOTS_THRESHOLD=5
+SLOTS_THRESHOLD=50
 # class LiquorStore(models.Model):
 #     owner = models.ForeignKey(StoreOwnmer, on_delete=models.CASCADE)
 #     name = models.CharField(max_length=200)
@@ -32,16 +32,27 @@ SLOTS_THRESHOLD=5
 def stores(request):
     if request.method == 'POST':
         owner=createNewOwner(request)
+        context={
+            'StoreOwner' : StoreOwnerForm(request.POST),
+            'LiquorStore': LiquorStoreForm(request.POST)
+         }
+        print(owner)
+        #if owner.get("error") is not None:
+            #context.update({"error":owner.get("error")})
+        #else:          
         store=createNewStore(request,owner)
-        print(store.get('store_id')); 
-        if store.get('store_id') is not None:
-            context={
-                "store_id":store.get('store_id')
-            }
-            return  redirect('stores/'+ store.get('store_id')+"?isNew=true")
+        if store.get("error"):
+            context.update({"error":store.get("error")})
         else:
-            print(store)
-            
+            print(store.get('store_id')); 
+            if store.get('store_id') is not None:
+                context={
+                    "store_id":store.get('store_id')
+                }
+                return  redirect('stores/'+ store.get('store_id')+"?isNew=true")
+            else:
+                print(store)
+        return render(request, 'liquor/stores.html',context)
 
     context={
         'StoreOwner' : StoreOwnerForm(),
@@ -143,14 +154,25 @@ def index(request):
         if form.is_valid():
             print('It a valid form')
             token=saveConsumerAndGenerateToken(request) 
-            if token is None or token.get('error'):
+            print(token)
+            mobileNumber=token.get("mobile_number")
+            tokenNumber=token.get("token")
+
+            if tokenNumber is None or token.get('error'):
                 return  render(request, 'liquor/index.html', {"error": token.get('error'), 'isSearch': True,'form': SearchStore()})       
-            context = {
+            elif mobileNumber:
+                twilioResp=Utils.sms(tokenNumber,mobileNumber)
+                if type(twilioResp) == dict and twilioResp.get('error') is not None:
+                    context = {
                 'isSearch': False,
-                'details': token
-                
+                'details': token,
+                'error': "There was an error while sending the token number on your mobile, please contact support team or regenerate it."
             }
-           
+                else: 
+                    context = {
+                    'isSearch': False,
+                    'details': token
+                }
             return render(request, 'liquor/consumer-thanks.html', context)
         else:
             print("form validation failed")
@@ -318,7 +340,11 @@ def generateToken(formConsumer,consumer,store):
     )
     token.save()
     if token is None: return None
-    return {'token':token_number,'address': token.store.name + " - " +token.store.address +",-" +token.store.store_id}
+    return {'mobile_number': consumer.mobile_number,
+        'token':token_number,'address': token.store.name + " - " +token.store.address 
+        +"," +token.store.pincode
+     #+",-" +token.store.store_id
+     }
     
     
 def token_generator(size=10, chars=string.ascii_uppercase + string.digits):
@@ -355,6 +381,7 @@ def createNewOwner(request):
         else:
             print("Owner already  exists : "+ owner.name)
             return owner
+            #return {"error": "Owner already  exists : "+ owner.name + ", Please contact to support team, you can't register same store two times."}
     
 
 
@@ -392,6 +419,7 @@ def createNewStore(request,owner):
             print("New Store has created: " + store.store_id)
         else:
             print("Store does exists already: " +  store.store_id)
+            return {"error": "Store already  exists : "+ owner.name + ", Please contact to support team, you can't register same store two times."}
 
         return {"store_id":store.store_id}
     

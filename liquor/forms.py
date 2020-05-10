@@ -13,7 +13,7 @@ def getStoresAddresses():
 #def getStoresAddresses(): return [('123','123')]
 
 class ConsumerForm(forms.Form):
-    mobile_number = forms.CharField(label='Consumer Mobile Number', max_length=200,required=True)
+    mobile_number = forms.CharField(label='Consumer Mobile Number', max_length=10,required=True)
     name = forms.CharField(label='Consumer Name',max_length=200,required=True)
     address = forms.CharField(label='Consumer Address', max_length=1000,required=True)
     pincode = forms.CharField(label='Consumer pincode', max_length=6,required=True)
@@ -28,7 +28,7 @@ class ConsumerForm(forms.Form):
         self.fields['pickup_time'] = forms.ChoiceField(choices=tuple(slots))
 
 class ConsumerFormT(forms.Form):
-    mobile_number = forms.CharField(label='Consumer Mobile Number', max_length=200,required=True)
+    mobile_number = forms.CharField(label='Consumer Mobile Number', max_length=10,required=True)
     name = forms.CharField(label='Consumer Name',max_length=200,required=True)
     address = forms.CharField(label='Consumer Address', max_length=1000,required=True)
     pincode = forms.CharField(label='Consumer pincode', max_length=6,required=True)

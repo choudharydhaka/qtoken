@@ -1,8 +1,6 @@
 {% extends 'liquor/base.html' %}
 {% block content %}
-<h1>
-{% url 'liquor:index'  %}
-</h1>
+
 <h1>Submit your details to generate the token </h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
@@ -29,7 +27,7 @@
 <form action="{% url 'liquor:search' %}" method="post">
 {% csrf_token %}
 {{form.as_p }}
-<input type="submit" value="Get Token">
+<input type="submit" value="Get Store">
 </form>
 {% endif %}
 

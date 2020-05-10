@@ -2,7 +2,28 @@
 {% block content %}
 <h3>Please register your Liquor store</h3>
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% if error_message %} <div class="alert alert-danger">
+    <strong>{{ error_message|escape }}</strong>
+</div>{% endif %}
+  
+{% if error %}<div class="alert alert-danger">
+    <strong>{{ error|escape }}</strong>
+</div>{% endif %}
+{% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+    {% endif %} 
+
 
 <form action="{% url 'liquor:stores' %}" method="post">
     <p><strong>Owner  Details</strong></p>

@@ -14,10 +14,16 @@ Store Registered Pincode: {{store.pincode}}
 
 <h1>Tokens for your store</h1>
 
+{% if error_message %} <div class="alert alert-danger">
+  <strong>{{ error_message|escape }}</strong>
+</div>{% endif %}
 
-{% if error %}
-<h4>Please provide a valid store ID, {{store_id}}</h4>
-{% endif %}
+{% if error %}<div class="alert alert-danger">
+  <strong>{{ error|escape }}</strong>
+  <strong> Please provide a valid store ID, {{store_id}}<strong>
+</div>{% endif %}
+
+
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 {% if not error %}

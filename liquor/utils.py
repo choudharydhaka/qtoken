@@ -12,19 +12,41 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.utils import timezone
 import pytz
 
-
+from django.conf import settings
 import datetime
-import twilio
-import twilio.rest
+from twilio import *
+from twilio.base.exceptions import TwilioRestException
 
 from django.http import HttpResponse
+from twilio.rest import Client
 
 class Utils:
 
 
-    def sms(request):
+    def sms(token,mobile):
+        
         twiml = '<Response><Message>Hello from your Django app!</Message></Response>'
-        return HttpResponse(twiml, content_type='text/xml')
+        twilio_client=Client(settings.TWILIO_ACCOUNT_SID,settings.TWILIO_AUTH_TOKEN)
+        message=None
+        if token is None or  mobile is None:
+            message={"error":"Please provide both token and mobile number"}
+            print("found - token: ",token,",Mobile: ",mobile)
+            return message
+        try: 
+            message = twilio_client.messages.create(
+            body="Your Qtoken liquor pickup token is: "+token,
+            messaging_service_sid=settings.TWILIO_MESSAGING_SERVICE_SID,
+            from_=settings.TWILIO_FROM_MOBILE,
+            to=settings.TWILIO_TO_COUNTRY_CODE + mobile
+        )
+        except TwilioRestException as e:
+            
+            message={"error":" Error while sending token " + token + " to the mobile " +  mobile}
+            print("ERROR: Twilio rest api error", str(e))
+            return message
+
+        print(message)
+        return message
     # start_time = '9:00'
     # end_time = '18:00'
     # slot_time = 10

@@ -1,6 +1,19 @@
-<h3>
- Thanks, your token is: {{details.token}}, Please visit the store: {{details.address}}
-</h3>
+{% extends 'liquor/base.html' %}
+{% block content %}
+<p>
+ Thanks, your token is: <strong>{{details.token}}</strong>, 
+ Please visit the store: <strong>{{details.address}}</strong>
+</p>
 
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% if error_message %} <div class="alert alert-danger">
+    <strong>{{ error_message|escape }}</strong>
+  </div>{% endif %}
+  
+  {% if error %}<div class="alert alert-danger">
+    <strong>{{ error|escape }}</strong>
+    
+  </div>{% endif %}
+  
+
+{% endblock %}
