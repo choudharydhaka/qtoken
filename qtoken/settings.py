@@ -24,13 +24,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'hy7f%7l!v64uc(vl$a@m*i$e2(4p-)oe_opm3r0*1p#xg@)u4$'
 
 ## twilio settings
-## twilio settings
-TWILIO_ACCOUNT_SID = "AC6b57e44a231df799e5e1fef783651069"
+TWILIO_ACCOUNT_SID = "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 # Your Auth Token from twilio.com/console
-TWILIO_AUTH_TOKEN  = "15e6c7ac551b5f5e45e826469624fbcd"
-TWILIO_MESSAGING_SERVICE_SID="MGa21ca965ac1568bc35e29064f515afe5"
-TWILIO_FROM_MOBILE='+13602267262'
-TWILIO_TO_COUNTRY_CODE='+64'
+TWILIO_AUTH_TOKEN  = "your_auth_token"
+
+# Your Message service ID https://www.twilio.com/console/sms/services
+TWILIO_MESSAGING_SERVICE_SID="MESGXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+#TWILIO_FROM_MOBILE='+512488566'
+TWILIO_FROM_MOBILE='+YOUR_TWILIO_PURCHASED_NUMBER'
+#TWILIO_TO_COUNTRY_CODE='+91'
+TWILIO_TO_COUNTRY_CODE='+COUNTRY_CODE_TO_SEND_SMS'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
