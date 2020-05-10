@@ -29,5 +29,7 @@ urlpatterns = [
     path('stores', views.stores, name='stores'),     
 
     #path('stores/register', views.stores, name='storeRegister'),  
-    path('stores/<str:store_id>', views.tokens, name='tokens'),
+    path('stores/<str:store_id>/', views.tokens,{'day': None}, name='tokens'),
+    path('stores/<str:store_id>/<str:day>', views.tokens, name='tokens'),
+   # path('stores/<str:store_id>/today', views.tokens, {"day":"today"},name='tokens'), 
 ]

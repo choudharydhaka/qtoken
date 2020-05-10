@@ -9,7 +9,7 @@
  
 {% endif %}
 
-Pincode: {{store.pincode}}
+Store Registered Pincode: {{store.pincode}}
 
 
 <h1>Tokens for your store</h1>
@@ -25,9 +25,11 @@ Pincode: {{store.pincode}}
   <tr> <th>Customer Name</th><th>Customer mobile </th><th>Customer address</th>
     <th>Token number</th>
     <th>Token Valid</th>
-    <th>Token date</th>
+    <th>Token Issued</th>
+    <th>Token Valid through</th>
     <th>Time Slot</th>
   </tr>
+
 {% for c in tokens %}
     <td>{{ c.consumer.name }}</td>
     <td>{{ c.consumer.mobile_number }}</td>
@@ -35,6 +37,7 @@ Pincode: {{store.pincode}}
       <td>{{ c.token_number }}</td>
       <td>{{ c.token_valid }}</td>
       <td>{{ c.token_created }}</td>
+      <td>{{ c.pickup_date }}</td>
       <td>{{ c.token_slot }}</td>
   </tr>
 {% endfor %}

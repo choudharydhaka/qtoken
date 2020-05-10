@@ -93,7 +93,7 @@ def searchStore(request):
                 #             print(count)
 
 
-                form=ConsumerForm(initial={'pickup_time':timezone.now()})
+                form=ConsumerForm(initial={'pickup_time':timezone.now(),'pickup_date':timezone.now().date()})
                 form.setAddresses(store_address)
 
                 #Utils().getNextSlot(start_time='9:00',end_time='18:00',slot_time=10)
@@ -163,7 +163,7 @@ def index(request):
     #return render(request, 'liquor/index.html', {'isSearch': False,'form': SearchStore()})#ConsumerForm(initial={'pickup_time':timezone.now()})})
 
 
-def tokens(request,store_id):
+def tokens(request,store_id,day):
     print("Looking for the store: " +store_id)
     liquorStore=get_object_or_404(LiquorStore,store_id=store_id)
 
@@ -176,11 +176,21 @@ def tokens(request,store_id):
         tokens=[]
         #tokens=get_list_or_404(Token)
         #print(tokens)
-        for tk in Token.objects.all() :
-            print(tk.store.store_id)
-            if tk.store.store_id == store_id:
-                print("Store found")
-                tokens.append(tk)
+        if str(day) == "all":
+           print("All tokens")
+           tokens=Token.getAllToken(store_id=store_id)            
+        elif str(day)  == "today":
+            print("Todays tokens")
+            tokens=Token.getTodayOnly(store_id=store_id)
+        else:
+            print("Current tokens") 
+            tokens=Token.getCurrent(store_id=store_id)
+            # for tk in Token.objects.filter(pickup_date__date=datetime.datetime.now().date() ,token_slot=currentHours) :
+            #     print(tk.store.store_id, datetime.datetime.now().date(), tk.pickup_date.date() )
+            #     #if tk.store.store_id == store_id and  datetime.datetime.now().date() == tk.pickup_date.date() and currentHours == tk.token_slot:
+            #     if tk.store.store_id == store_id :
+            #         print("Store found")
+            #         tokens.append(tk)
 
         
         context={
@@ -302,6 +312,7 @@ def generateToken(formConsumer,consumer,store):
         store=store,
         consumer=consumer,
         token_slot=formConsumer.cleaned_data['pickup_time'],
+        pickup_date=formConsumer.cleaned_data['pickup_date'],
         token_valid=True,
         token_number=token_number
     )
