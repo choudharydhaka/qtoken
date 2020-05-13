@@ -1,7 +1,10 @@
 # **qtoken**
-This is qtoken store application to help any govt/stores to allow people to give order online and help them to avoid any un for State Govt of India
+This is qtoken store Minimum viable product(MVP) application to help any govt/stores to allow people to place order online and help them to avoid Covid19 infection.
+
+This app has basic functionality, it needs some improvement which includes Authentication and DB correction/optimization.
 
 # Audiance
+
 - Developers
 - Anyone who want to utilize this functionality
 
@@ -50,9 +53,9 @@ python manage.py runserver 8080
 You will have to register the stores below any consumer make any request for Liquor
 
 - Step 1: goto your browser and type:
- ``` http://127.0.0.1:8080/stores/```, this page will ask you to register both store details and owner details
+ ``` http://127.0.0.1:8080/liquor/stores/```, this page will ask you to register both store details and owner details
 
-  ![](/.attachments/s-submit-1.png)
+  ![](/.attachments/s-submit-1.PNG)
 
  Once you submitted the details, it will generate a STORE ID for you, 
  > STORE ID is a unique value, you will not be able to get it again, so please note it down safely
