@@ -14,8 +14,8 @@ import pytz
 
 from django.conf import settings
 import datetime
-from twilio import *
-from twilio.base.exceptions import TwilioRestException
+# from twilio import *
+# from twilio.base.exceptions import TwilioRestException
 
 from django.http import HttpResponse
 from twilio.rest import Client
@@ -25,28 +25,29 @@ class Utils:
 
     def sms(token,mobile):
         
-        twiml = '<Response><Message>Hello from your Django app!</Message></Response>'
-        twilio_client=Client(settings.TWILIO_ACCOUNT_SID,settings.TWILIO_AUTH_TOKEN)
-        message=None
-        if token is None or  mobile is None:
-            message={"error":"Please provide both token and mobile number"}
-            print("found - token: ",token,",Mobile: ",mobile)
-            return message
-        try: 
-            message = twilio_client.messages.create(
-            body="Your Qtoken liquor pickup token is: "+token,
-            messaging_service_sid=settings.TWILIO_MESSAGING_SERVICE_SID,
-            from_=settings.TWILIO_FROM_MOBILE,
-            to=settings.TWILIO_TO_COUNTRY_CODE + mobile
-        )
-        except TwilioRestException as e:
+        # twiml = '<Response><Message>Hello from your Django app!</Message></Response>'
+        # twilio_client=Client(settings.TWILIO_ACCOUNT_SID,settings.TWILIO_AUTH_TOKEN)
+        # message=None
+        # if token is None or  mobile is None:
+        #     message={"error":"Please provide both token and mobile number"}
+        #     print("found - token: ",token,",Mobile: ",mobile)
+        #     return message
+        # try: 
+        #     message = twilio_client.messages.create(
+        #     body="Your Qtoken liquor pickup token is: "+token,
+        #     messaging_service_sid=settings.TWILIO_MESSAGING_SERVICE_SID,
+        #     from_=settings.TWILIO_FROM_MOBILE,
+        #     to=settings.TWILIO_TO_COUNTRY_CODE + mobile
+        # )
+        # except TwilioRestException as e:
             
-            message={"error":" Error while sending token " + token + " to the mobile " +  mobile}
-            print("ERROR: Twilio rest api error", str(e))
-            return message
+        #     message={"error":" Error while sending token " + token + " to the mobile " +  mobile}
+        #     print("ERROR: Twilio rest api error", str(e))
+        #     return message
 
-        print(message)
-        return message
+        # print(message)
+        # return message
+        return 
     # start_time = '9:00'
     # end_time = '18:00'
     # slot_time = 10

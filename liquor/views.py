@@ -317,12 +317,14 @@ def generateToken(formConsumer,consumer,store):
         return None
     slotTime=formConsumer.cleaned_data['pickup_time']
 
-    count=0
-    for t in Token.objects.all():
-        if t.store.store_id == store.store_id and slotTime == t.token_slot:
-            count=count+1
-            print(count)
-    if count >   SLOTS_THRESHOLD:
+    # count=0
+    # import pdb;pdb.set_trace()
+    # for t in Token.objects.all():
+    #     if t.store.store_id == store.store_id and slotTime == t.token_slot:
+    #         count=count+1
+    #         print(count)
+    count = Token.objects.filter(store = store, token_slot = slotTime).count()
+    if count >   1:
         return {
             "error": "This time slot is exhausted, Please search again"
         } 
